@@ -1,5 +1,5 @@
 {
-    "name": "@deliveryhero/dynamodb-lock",
+    "name": "@deliveryhero/dynamodb-lock-nodejs",
     "version": "1.2.0",
     "license": "MIT",
     "description": "Distributed locking library backed by DynamoDB.",
