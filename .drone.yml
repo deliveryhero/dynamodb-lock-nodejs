@@ -10,8 +10,6 @@ tolerations:
 node_selector:
   app: drone
 
-service_account_name: drone-dynamodb-lock-nodejs
-
 environment:
   AWS_REGION: eu-west-1
 
