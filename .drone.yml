@@ -2,10 +2,7 @@ kind: pipeline
 type: kubernetes
 name: default
 
-tolerations:
-  - effect: NoSchedule
-    key: app
-    operator: Exists
+service_account_name: drone-log-vendor-npm-dynamodb-lock
 
 node_selector:
   app: drone
@@ -40,7 +37,7 @@ steps:
   - name: install
     <<: *node_js
     commands:
-      - sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.dist.github > .npmrc
+      - sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.dist.github > .npmrc || exit 1
       - yarn install || exit 1
 
   - name: prepare
@@ -82,10 +79,10 @@ steps:
         then
           echo "Pushed tag matches package version, publishing package to Github Packages"
           sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.dist.github > .npmrc
-          npm publish     
+          npm publish || exit 1
           echo "Publishing package to NPM"
           sed 's/$${NPM_PKG_TOKEN}/'$$NPM_PKG_TOKEN'/g' .npmrc.dist.npm > .npmrc
-          npm publish --access public
+          npm publish --access public || exit 1
         else
           echo "Pushed tag does not match package version, will not publish package"
         fi
