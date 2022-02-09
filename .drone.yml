@@ -40,13 +40,13 @@ steps:
   - name: install
     <<: *node_js
     commands:
-      - sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.npm.dist.github.dist.github > .npmrc.npm.dist
-      - yarn install
+      - sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.dist.github > .npmrc
+      - yarn install || exit 1
 
   - name: prepare
     <<: *node_js
     commands:
-      - yarn prepare
+      - yarn prepare || exit 1
     depends_on:
       - "install"
 
