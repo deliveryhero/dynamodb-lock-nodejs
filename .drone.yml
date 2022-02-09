@@ -2,13 +2,10 @@ kind: pipeline
 type: kubernetes
 name: default
 
-tolerations:
-  - effect: NoSchedule
-    key: app
-    operator: Exists
-
 node_selector:
   app: drone
+
+service_account_name: drone-log-vendor-npm-dynamodb-lock
 
 environment:
   AWS_REGION: eu-west-1
@@ -28,6 +25,8 @@ node_js: &node_js
   environment:
     GITHUB_PKG_TOKEN:
       from_secret: GITHUB_PACKAGES_TOKEN
+    NPM_PKG_TOKEN:
+      from_secret: NPM_PACKAGES_TOKEN
   when:
     event:
       - push
@@ -38,13 +37,12 @@ steps:
   - name: install
     <<: *node_js
     commands:
-      - sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.dist > .npmrc
+      - sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.npm.dist.github.dist.github > .npmrc.npm.dist
       - yarn install
 
   - name: prepare
     <<: *node_js
     commands:
-      - sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.dist > .npmrc
       - yarn prepare
     depends_on:
       - "install"
@@ -79,8 +77,12 @@ steps:
       - |
         if [ $DRONE_TAG = v$PACKAGE_VERSION ]
         then
-          echo "Pushed tag matches package version, publishing package"
-          npm publish
+          echo "Pushed tag matches package version, publishing package to Github Packages"
+          sed 's/$${GITHUB_PKG_TOKEN}/'$$GITHUB_PKG_TOKEN'/g' .npmrc.dist.github > .npmrc
+          npm publish     
+          echo "Publishing package to NPM"
+          sed 's/$${NPM_PKG_TOKEN}/'$$NPM_PKG_TOKEN'/g' .npmrc.dist.npm > .npmrc
+          npm publish --access public
         else
           echo "Pushed tag does not match package version, will not publish package"
         fi

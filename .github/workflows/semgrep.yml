@@ -1,8 +1,8 @@
 name: Semgrep
- 
+
 on:
   pull_request: {}
- 
+
 jobs:
   semgrep:
     name: Scan
@@ -16,5 +16,4 @@ jobs:
           config: >- 
             p/security-audit
             p/secrets
-            p/nodejs
             

@@ -30,7 +30,6 @@ module.exports = {
         "comma-spacing": ["error", {"before": false, "after": true }],
         "space-infix-ops": ["error", {"int32Hint": false}],
         "no-useless-computed-key": "error",
-        "no-return-await": "error",
         "no-throw-literal": "error",
         "no-whitespace-before-property": "error",
         "no-this-before-super": "error",
