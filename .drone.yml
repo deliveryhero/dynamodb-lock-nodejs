@@ -5,8 +5,6 @@ name: default
 node_selector:
   app: drone
 
-service_account_name: drone-log-vendor-npm-dynamodb-lock
-
 environment:
   AWS_REGION: eu-west-1
 
